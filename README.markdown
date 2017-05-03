@@ -213,7 +213,7 @@ For UIKit view controllers, consider grouping lifecycle, custom accessors, and I
 
 Unused (dead) code, including Xcode template code and placeholder comments should be removed
 
-Methods that simply calls the superclass should also be removed. This includes any empty/unused UIApplicationDelegate methods.
+Methods that simply call the superclass should also be removed. This includes any empty/unused UIApplicationDelegate methods.
 
 **Preferred:**
 ```swift
@@ -246,9 +246,7 @@ Keep imports minimal. For example, don't import `UIKit` when importing `Foundati
 
 ## Spacing
 
-* Indent using 4 spaces rather than tabs to conserve space and help prevent line wrapping. Be sure to set this preference in Xcode and in the Project settings as shown below:
-
-![Xcode indent settings](screens/indentation.png)
+* Indent using 4 spaces rather than tabs to conserve space and help prevent line wrapping. Check xcode settings at the end.
 
 * Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line.
 * Tip: You can re-indent by selecting some code (or ⌘A to select all) and then Control-I (or Editor\Structure\Re-Indent in the menu). Some of the Xcode template code will have 4-space tabs hard coded, so this is a good way to fix that.
@@ -275,12 +273,13 @@ else {
 
 * There should be exactly one blank line between methods to aid in visual clarity and organization. Whitespace within methods should separate functionality, but having too many sections in a method often means you should refactor into several methods.
 
+* Colons always have no space on the left and one space on the right. Exceptions are the ternary operator `? :`, dictionaries (empty 👉 `[:]` | type declaration 👉 `[String : CGFloat]` | populate 👉 `["A" : 1.2]`), `#selector` syntax for unnamed parameters `(_:)` and dictionary 
 * Colons should have one space on the left and one on the right. Exceptions are empty dictionary `[:]` and `#selector` syntax for unnamed parameters `(_:)`.
 
 **Preferred:**
 ```swift
 class TestDatabase: Database {
-  var data: [String: CGFloat] = ["A" : 1.2, "B" : 3.2]
+  var data: [String : CGFloat] = ["A" : 1.2, "B" : 3.2]
 }
 ```
 
@@ -296,6 +295,8 @@ class TestDatabase : Database {
 * Avoid trailing whitespaces at the ends of lines.
 
 * Add a single newline character at the end of each file.
+
+![Xcode settings](screens/xcode_settings.png)
 
 ## Comments
 
@@ -433,6 +434,8 @@ func reticulateSplines(spline: [Double],
 }
 ```
 
+**Note:** We can use Xcode automatic alignment by pressing return before each parameter.
+
 ## Closure Expressions
 
 Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Give the closure parameters descriptive names.
@@ -553,7 +556,7 @@ if let textContainer = self.textContainer {
   // do many things with textContainer
 }
 ```
-If the optional value is required to the context, use `guard let ...` and `assertionFailure` to catch the problem in debug time.
+If the optional value is required to the context, use `guard let ...` with `assertionFailure` to catch the problem in debug time or `fatalError` if the execution cannot continue.
 
 When naming optional variables and properties, avoid naming them like `optionalString` or `maybeView` since their optional-ness is already in the type declaration.
 
@@ -903,16 +906,16 @@ let playerMark = (player == current ? "X" : "O")
 
 ## Organization and Bundle Identifier
 
-Where an Xcode project is involved, the organization should be set to `Mindera` or to the client name if required.
+In the Xcode project, the organization should be set to `Mindera` or to the client's name if required.
 
 The Bundle Identifier should be set to `com.mindera.client.projectName` where `client` is the client company name and `project` is the name of the project we are working on.
+This will make sure that the app bundle identifier will not collide with other applications bundle identifier.
 
 ⚠️ Be careful when picking the bundle identifier, make sure we don't lock a bundle identifier that would be used by the client to the Mindera account. ⚠️
 
 **Example:** We should not deploy applications into the Mindera account with the bundle identifier `com.client.projectName`
 
 ![Xcode Project settings](screens/project_settings.png)
-
 
 ## References
 
