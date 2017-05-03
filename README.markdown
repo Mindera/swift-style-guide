@@ -1,9 +1,5 @@
-# The Official raywenderlich.com Swift Style Guide.
-### Updated for Swift 3
-
-This style guide is different from others you may see, because the focus is centered on readability for print and the web. We created this style guide to keep the code in our books, tutorials, and starter kits nice and consistent — even though we have many different authors working on the books.
-
-Our overarching goals are clarity, consistency and brevity, in that order.
+# The Mindera Swift Style Guide
+(Based on raywanderlich.com swift style guide ❤️)
 
 ## Table of Contents
 
@@ -209,15 +205,15 @@ class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDel
 }
 ```
 
-Since the compiler does not allow you to re-declare protocol conformance in a derived class, it is not always required to replicate the extension groups of the base class. This is especially true if the derived class is a terminal class and a small number of methods are being overridden. When to preserve the extension groups is left to the discretion of the author.
+Since the compiler does not allow you to re-declare protocol conformance in a derived class, it is not always required to replicate the extension groups of the base class. This is especially true if the derived class is a terminal class and a small number of methods are being overridden. When to preserve the extension groups is left to the discretion of the developer.
 
 For UIKit view controllers, consider grouping lifecycle, custom accessors, and IBAction in separate class extensions.
 
 ### Unused Code
 
-Unused (dead) code, including Xcode template code and placeholder comments should be removed. An exception is when your tutorial or book instructs the user to use the commented code.
+Unused (dead) code, including Xcode template code and placeholder comments should be removed
 
-Aspirational methods not directly associated with the tutorial whose implementation simply calls the superclass should also be removed. This includes any empty/unused UIApplicationDelegate methods.
+Methods that simply calls the superclass should also be removed. This includes any empty/unused UIApplicationDelegate methods.
 
 **Preferred:**
 ```swift
@@ -250,7 +246,7 @@ Keep imports minimal. For example, don't import `UIKit` when importing `Foundati
 
 ## Spacing
 
-* Indent using 2 spaces rather than tabs to conserve space and help prevent line wrapping. Be sure to set this preference in Xcode and in the Project settings as shown below:
+* Indent using 4 spaces rather than tabs to conserve space and help prevent line wrapping. Be sure to set this preference in Xcode and in the Project settings as shown below:
 
 ![Xcode indent settings](screens/indentation.png)
 
@@ -279,23 +275,23 @@ else {
 
 * There should be exactly one blank line between methods to aid in visual clarity and organization. Whitespace within methods should separate functionality, but having too many sections in a method often means you should refactor into several methods.
 
-* Colons always have no space on the left and one space on the right. Exceptions are the ternary operator `? :`, empty dictionary `[:]` and `#selector` syntax for unnamed parameters `(_:)`.
+* Colons should have one space on the left and one on the right. Exceptions are empty dictionary `[:]` and `#selector` syntax for unnamed parameters `(_:)`.
 
 **Preferred:**
 ```swift
 class TestDatabase: Database {
-  var data: [String: CGFloat] = ["A": 1.2, "B": 3.2]
+  var data: [String: CGFloat] = ["A" : 1.2, "B" : 3.2]
 }
 ```
 
 **Not Preferred:**
 ```swift
 class TestDatabase : Database {
-  var data :[String:CGFloat] = ["A" : 1.2, "B":3.2]
+  var data :[String:CGFloat] = ["A": 1.2, "B":3.2, "C" :2.2]
 }
 ```
 
-* Long lines should be wrapped at around 70 characters. A hard limit is intentionally not specified.
+* Long lines should be wrapped at around 120 characters. A hard limit is intentionally not specified.
 
 * Avoid trailing whitespaces at the ends of lines.
 
@@ -398,7 +394,13 @@ var diameter: Double {
 
 ### Final
 
-Marking classes or members as `final` in tutorials can distract from the main topic and is not required. Nevertheless, use of `final` can sometimes clarify your intent and is worth the cost. In the below example, `Box` has a particular purpose and customization in a derived class is not intended. Marking it `final` makes that clear.
+Use of `final` is advised, it helps to clarify your intention with the class and it's worth the cost.
+
+* In classes when it is not suppose to be subclassed.
+* In members when it is a `lazy var` that is not supposed to be changed in runtime.
+* Do not use in `let` variables.
+
+In the below example, `Box` has a particular purpose and customization in a derived class is not intended. Marking it `final` makes that clear.
 
 ```swift
 // Turn any generic type into a reference type using this Box class.
@@ -423,8 +425,10 @@ func reticulateSplines(spline: [Double]) -> Bool {
 For functions with long signatures, add line breaks at appropriate points and add an extra indent on subsequent lines:
 
 ```swift
-func reticulateSplines(spline: [Double], adjustmentFactor: Double,
-    translateConstant: Int, comment: String) -> Bool {
+func reticulateSplines(spline: [Double],
+                       adjustmentFactor: Double,
+                       translateConstant: Int, 
+                       comment: String) -> Bool {
   // reticulate code goes here
 }
 ```
@@ -462,12 +466,14 @@ UIView.animate(withDuration: 1.0, animations: {
 For single-expression closures where the context is clear, use implicit returns:
 
 ```swift
-attendeeList.sort { a, b in
-  a > b
+attendeeList.sort { $0 > $1 }
+
+attendeeList.sort { first, second in
+  first > second
 }
 ```
 
-Chained methods using trailing closures should be clear and easy to read in context. Decisions on spacing, line breaks, and when to use named versus anonymous arguments is left to the discretion of the author. Examples:
+Chained methods using trailing closures should be clear and easy to read in context. Decisions on spacing, line breaks, and when to use named versus anonymous arguments is left to the discretion of the developer. Examples:
 
 ```swift
 let value = numbers.map { $0 * 2 }.filter { $0 % 3 == 0 }.index(of: 90)
@@ -547,6 +553,7 @@ if let textContainer = self.textContainer {
   // do many things with textContainer
 }
 ```
+If the optional value is required to the context, use `guard let ...` and `assertionFailure` to catch the problem in debug time.
 
 When naming optional variables and properties, avoid naming them like `optionalString` or `maybeView` since their optional-ness is already in the type declaration.
 
@@ -678,7 +685,7 @@ let value = max(x, y, z)  // another free function that feels natural
 
 ## Memory Management
 
-Code (even non-production, tutorial demo code) should not create reference cycles. Analyze your object graph and prevent strong cycles with `weak` and `unowned` references. Alternatively, use value types (`struct`, `enum`) to prevent cycles altogether.
+Code should not create reference cycles. Analyze your object graph and prevent strong cycles with `weak` and `unowned` references. Alternatively, use value types (`struct`, `enum`) to prevent cycles altogether.
 
 ### Extending object lifetime
 
@@ -715,7 +722,8 @@ resource.request().onComplete { [weak self] response in
 
 ## Access Control
 
-Full access control annotation in tutorials can distract from the main topic and is not required. Using `private` and `fileprivate` appropriately, however, adds clarity and promotes encapsulation. Prefer `private` to `fileprivate` when possible. Using extensions may require you to use `fileprivate`.
+* Using `private` and `fileprivate` appropriately, adds clarity and promotes encapsulation.
+* Prefer `private` to `fileprivate` when possible. Using extensions may require you to use `fileprivate`.
 
 Only explicitly use `open`, `public`, and `internal` when you require a full access control specification.
 
@@ -895,60 +903,16 @@ let playerMark = (player == current ? "X" : "O")
 
 ## Organization and Bundle Identifier
 
-Where an Xcode project is involved, the organization should be set to `Ray Wenderlich` and the Bundle Identifier set to `com.razeware.TutorialName` where `TutorialName` is the name of the tutorial project.
+Where an Xcode project is involved, the organization should be set to `Mindera` or to the client name if required.
+
+The Bundle Identifier should be set to `com.mindera.client.projectName` where `client` is the client company name and `project` is the name of the project we are working on.
+
+⚠️ Be careful when picking the bundle identifier, make sure we don't lock a bundle identifier that would be used by the client to the Mindera account. ⚠️
+
+**Example:** We should not deploy applications into the Mindera account with the bundle identifier `com.client.projectName`
 
 ![Xcode Project settings](screens/project_settings.png)
 
-## Copyright Statement
-
-The following copyright statement should be included at the top of every source
-file:
-
-```swift
-    /**
-     * Copyright (c) 2017 Razeware LLC
-     *
-     * Permission is hereby granted, free of charge, to any person obtaining a copy
-     * of this software and associated documentation files (the "Software"), to deal
-     * in the Software without restriction, including without limitation the rights
-     * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-     * copies of the Software, and to permit persons to whom the Software is
-     * furnished to do so, subject to the following conditions:
-     *
-     * The above copyright notice and this permission notice shall be included in
-     * all copies or substantial portions of the Software.
-     *
-     * Notwithstanding the foregoing, you may not use, copy, modify, merge, publish, 
-     * distribute, sublicense, create a derivative work, and/or sell copies of the 
-     * Software in any work that is designed, intended, or marketed for pedagogical or 
-     * instructional purposes related to programming, coding, application development, 
-     * or information technology.  Permission for such use, copying, modification,
-     * merger, publication, distribution, sublicensing, creation of derivative works, 
-     * or sale is expressly withheld.
-     *
-     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-     * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-     * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-     * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-     * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-     * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-     * THE SOFTWARE.
-     */
-```
-
-## Smiley Face
-
-Smiley faces are a very prominent style feature of the [raywenderlich.com](https://www.raywenderlich.com/) site! It is very important to have the correct smile signifying the immense amount of happiness and excitement for the coding topic. The closing square bracket `]` is used because it represents the largest smile able to be captured using ASCII art. A closing parenthesis `)` creates a half-hearted smile, and thus is not preferred.
-
-**Preferred:**
-```
-:]
-```
-
-**Not Preferred:**
-```
-:)
-```  
 
 ## References
 
