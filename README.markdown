@@ -52,7 +52,9 @@
     - [Failing Guards](#failing-guards)
   - [Semicolons](#semicolons)
   - [Parentheses](#parentheses)
-  - [Multi-line String Literals](#multi-line-string-literals)
+  - [String Literals](#string-literals)
+    - [Multi-line strings](#multi-line-strings)
+    - [Raw strings](#raw-strings)
   - [Organization and Bundle Identifier](#organization-and-bundle-identifier)
   - [References](#references)
 
@@ -105,7 +107,6 @@ For the above example using `UIGestureRecognizer`, 1 is unambiguous and preferre
 **Pro Tip:** You can use Xcode's jump bar to lookup methods with argument labels. If you’re particularly good at mashing lots of keys simultaneously, put the cursor in the method name and press **Shift-Control-Option-Command-C** (all 4 modifier keys) and Xcode will kindly put the signature on your clipboard.
 
 ![Methods in Xcode jump bar](screens/xcode-jump-bar.png)
-
 
 ### Class Prefixes
 
@@ -196,24 +197,24 @@ In particular, when adding protocol conformance to a model, prefer adding a sepa
 **Preferred**:
 ```swift
 class MyViewController: UIViewController {
-  // class stuff here
+    // class stuff here
 }
 
 // MARK: - UITableViewDataSource
 extension MyViewController: UITableViewDataSource {
-  // table view data source methods
+    // table view data source methods
 }
 
 // MARK: - UIScrollViewDelegate
 extension MyViewController: UIScrollViewDelegate {
-  // scroll view delegate methods
+    // scroll view delegate methods
 }
 ```
 
 **Not Preferred**:
 ```swift
 class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
-  // all methods
+    // all methods
 }
 ```
 
@@ -230,25 +231,29 @@ Methods that simply call the superclass should also be removed. This includes an
 **Preferred**:
 ```swift
 override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-  return Database.contacts.count
+
+    return Database.contacts.count
 }
 ```
 
 **Not Preferred**:
 ```swift
 override func didReceiveMemoryWarning() {
-  super.didReceiveMemoryWarning()
-  // Dispose of any resources that can be recreated.
+    super.didReceiveMemoryWarning()
+
+    // Dispose of any resources that can be recreated.
 }
 
 override func numberOfSections(in tableView: UITableView) -> Int {
-  // #warning Incomplete implementation, return the number of sections
-  return 1
+
+    // #warning Incomplete implementation, return the number of sections
+    return 1
 }
 
 override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-  // #warning Incomplete implementation, return the number of rows
-  return Database.contacts.count
+
+    // #warning Incomplete implementation, return the number of rows
+    return Database.contacts.count
 }
 
 ```
@@ -288,7 +293,7 @@ var deviceModels: [String]
 * Indent using **4 spaces** rather than tabs to conserve space and help prevent line wrapping. Check xcode settings at the end.
 * Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line.
 
-**Tip**: You can re-indent by selecting some code (or **Command-A** to select all) and then **Control-I** (or **Editor ▸ Structure ▸ Re-Indent** in the menu). Some of the Xcode template code will have 4-space tabs hard coded, so this is a good way to fix that.
+**Pro Tip**: You can re-indent by selecting some code (or **Command-A** to select all) and then **Control-I** (or **Editor ▸ Structure ▸ Re-Indent** in the menu). Some of the Xcode template code will have 4-space tabs hard coded, so this is a good way to fix that.
 
 **Preferred**:
 ```swift
@@ -331,6 +336,39 @@ class TestDatabase : Database {
 }
 ```
 
+* There should be exactly one blank line after each function's declaration before any code. Exceptions are one-line functions that can be inlined, and invoking the `super` of the current method.
+
+**Preferred**:
+
+```swift
+func reticulateSplines(_ splines: [Double]) -> Bool {
+
+    // reticulate code goes here
+}
+
+func reticulateSplines(_ splines: [Double]) -> Bool { /* one-line reticulate code goes here */ }
+
+func reticulateSplines(_ splines: [Double]) -> Bool {
+    super.reticulateSplines(splines)
+
+    // reticulate code goes here
+}
+```
+
+**Not Preferred**:
+
+```swift
+func reticulateSplines(_ splines: [Double]) -> Bool {
+    // reticulate code goes here
+}
+
+func reticulateSplines(_ splines: [Double]) -> Bool {
+
+    super.reticulateSplines(splines)
+    // reticulate code goes here
+}
+```
+
 * Long lines should be wrapped at **120 characters**.
 
 * Remove any trailing whitespaces at the ends of lines.
@@ -349,7 +387,7 @@ Avoid the use of C-style comments (`/* ... */`). Prefer the use of double- or tr
 
 ### Documentation
 
-When documenting code, prefer the triple slash documentation style `///`. 
+When documenting code, prefer the triple slash documentation style `///`.
 
 Prefer one single `- Parameters:` section with bullet points for each parameter to multiple `parameter name:` sections.
 
@@ -368,9 +406,9 @@ Try to take advantage of existing keywords (e.g. `Returns`, `Throws`, `Warning`,
 ///   - comment: The reticulation operation comment, for logging purposes.
 /// - Returns: A flag indicating if reticulation was successful.
 func reticulateSplines(
-    spline: [Double],
+    _ splines: [Double],
     adjustmentFactor: Double,
-    translateConstant: Int, 
+    translateConstant: Int,
     comment: String
 ) -> Bool {
     ...
@@ -388,9 +426,9 @@ func reticulateSplines(
  - returns: A flag indicating if reticulation was successful.
 */
 func reticulateSplines(
-    spline: [Double],
+    _ splines: [Double],
     adjustmentFactor: Double,
-    translateConstant: Int, 
+    translateConstant: Int,
     comment: String
 ) -> Bool {
     ...
@@ -433,10 +471,7 @@ class Circle: Shape {
         self.init(x: x, y: y, radius: diameter / 2)
     }
 
-    override func area() -> Double {
-
-        return Double.pi * radius * radius
-    }
+    override func area() -> Double { Double.pi * radius * radius }
 }
 
 extension Circle: CustomStringConvertible {
@@ -478,14 +513,14 @@ var diameter: Double { radius * 2 }
 ```swift
 var diameter: Double {
     get {
-      return radius * 2
+        return radius * 2
     }
 }
 ```
 
 ### Shadowing private members
 
-Sometimes we need to expose some members like properties and functions publicly (e.g. for read-only property), but have a **shadowing** version for private usage (e.g. read-write property). 
+Sometimes we need to expose some members like properties and functions publicly (e.g. for read-only property), but have a **shadowing** version for private usage (e.g. read-write property).
 
 * When shadowing a property, the private property's name **should** be prefixed with a `_`, instead of more verbose alternatives like  `mutatingX`, etc..
 
@@ -550,7 +585,7 @@ final class Box<T> {
 
 ### Generics
 
-When defining a generic type, prefer inlining the generic declaration and constraints whenever possible. If not possible, break it according to the following rules: 
+When defining a generic type, prefer inlining the generic declaration and constraints whenever possible. If not possible, break it according to the following rules:
 
 * move the `where` clause to a separate line, if it doesn't fit inline.
   * break the conditions in the `where` clause to separate lines if they don't fit into a single line.
@@ -570,7 +605,7 @@ where
     AnotherGeneric.SubType == SomeOtherType,
     YetAnotherGeneric.YetAnotherSubType == YetAnotherType
 {
-    
+
     let myProperty: Bool
 
     func init() {}
@@ -595,7 +630,7 @@ typealias SomeOtherGenericTypealias<SomeGeneric> = YetAnotherType<SomeGeneric>
     where SomeGeneric: SomeProtocol & And & A & Bunch & Of & Others
 
 typealias SomeOtherGenericTypealias<SomeGeneric> = YetAnotherType<SomeGeneric>
-    where 
+    where
         SomeGeneric: SomeProtocol & And & A & Bunch & Of & Others,
         SomeGeneric.InternalType == SomeOtherType
 
@@ -609,22 +644,25 @@ typealias MyVeryLargeTypeAlias =
         SomeOtherGeneric
     >
 
-typealias MyLargeTypeAlias =    
+typealias MyLargeTypeAlias =
     SomeOtherVeyLongNamedGenericType<ThatHasItsOwnGenericType<WhichItselfHasAnotherGenericType>>
 
-typealias YetAnotherGenericTypealias<AnotherGeneric> = 
+typealias YetAnotherGenericTypealias<AnotherGeneric> =
     YetAnotherVeryLongNamedGenericType<AnotherGeneric>
-    where 
+    where
         AnotherGeneric: AnotherProtocol & And & His & Friends
         AnotherGeneric.SuperImportantType == YetAnotherType
 ```
 
 ## Function Declarations
 
+When declaring a function al
+
 Keep short function declarations on one line including the opening brace:
 
 ```swift
-func reticulateSplines(spline: [Double]) -> Bool {
+func reticulateSplines(_ splines: [Double]) -> Bool {
+
     // reticulate code goes here
 }
 ```
@@ -633,9 +671,9 @@ For functions with long signatures, put each parameter on a new line and add an 
 
 ```swift
 func reticulateSplines(
-    spline: [Double],
+    _ splines: [Double],
     adjustmentFactor: Double,
-    translateConstant: Int, 
+    translateConstant: Int,
     comment: String
 ) -> Bool {
 
@@ -685,10 +723,10 @@ If the call site must be wrapped, put each parameter on a new line, indented one
 
 ```swift
 let success = reticulateSplines(
-  spline: splines,
-  adjustmentFactor: 1.3,
-  translateConstant: 2,
-  comment: "normalize the display"
+    _ splines: splines,
+    adjustmentFactor: 1.3,
+    translateConstant: 2,
+    comment: "normalize the display"
 )
 ```
 
@@ -698,9 +736,7 @@ Use trailing closure syntax only if there's a single closure expression paramete
 
 **Preferred**:
 ```swift
-UIView.animate(withDuration: 1.0) {
-  self.myView.alpha = 0
-}
+UIView.animate(withDuration: 1.0) { self.myView.alpha = 0 }
 
 UIView.animate(
     withDuration: 1.0,
@@ -724,13 +760,13 @@ UIView.animate(
 **Not Preferred**:
 ```swift
 UIView.animate(withDuration: 1.0, animations: {
-  self.myView.alpha = 0
+    self.myView.alpha = 0
 })
 
 UIView.animate(withDuration: 1.0, animations: {
-  self.myView.alpha = 0
+    self.myView.alpha = 0
 }) { f in
-  self.myView.removeFromSuperview()
+    self.myView.removeFromSuperview()
 }
 ```
 
@@ -740,7 +776,7 @@ For single-expression closures where the context is clear, use implicit returns:
 attendeeList.sort { $0 > $1 }
 
 attendeeList.sort { first, second in
-  first > second
+    first > second
 }
 ```
 
@@ -750,9 +786,9 @@ Chained methods using trailing closures should be clear and easy to read in cont
 let value = numbers.map { $0 * 2 }.filter { $0 % 3 == 0 }.index(of: 90)
 
 let value = numbers
-  .map {$0 * 2}
-  .filter {$0 > 50}
-  .map {$0 + 10}
+    .map {$0 * 2}
+    .filter {$0 > 50}
+    .map {$0 + 10}
 ```
 
 ## Types
@@ -783,21 +819,21 @@ In drawing code, use `CGFloat` if it makes the code more succinct by avoiding to
 
 Constants are defined using the `let` keyword and variables with the `var` keyword. Always use `let` instead of `var` if the value of the variable will not change.
 
-**Tip:** A good technique is to define everything using `let` and only change it to `var` if the compiler complains!
+**Pro Tip:** A good technique is to define everything using `let` and only change it to `var` if the compiler complains!
 
 You can define constants on a type rather than on an instance of that type using type properties. To declare a type property as a constant simply use `static let`. Type properties declared in this way are generally preferred over global constants because they are easier to distinguish from instance properties. Example:
 
 **Preferred**:
 ```swift
 enum Math {
-  static let e = 2.718281828459045235360287
-  static let root2 = 1.41421356237309504880168872
+    static let e = 2.718281828459045235360287
+    static let root2 = 1.41421356237309504880168872
 }
 
 let hypotenuse = side * Math.root2
 
 ```
-**Note:** The advantage of using a case-less `enum` is that it can't accidentally be instantiated and works as a pure namespace.
+**Pro Tip:** The advantage of using a case-less `enum` is that it can't accidentally be instantiated and works as a pure namespace.
 
 **Not Preferred**:
 ```swift
@@ -892,7 +928,6 @@ private func makeLocationManager() -> CLLocationManager {
 **Notes:**
   - `[unowned self]` is not required here. A retain cycle is not created.
   - Location manager has a side-effect for popping up UI to ask the user for permission so fine grain control makes sense here.
-
 
 ### Type Inference
 
@@ -1019,8 +1054,8 @@ resource.request().onComplete { [weak self] response in
     guard let `self` = self else {
         return
     }
-    let model = strongSelf.updateModel(response)
-    strongSelf.updateUI(model)
+    let model = self.updateModel(response)
+    self.updateUI(model)
 }
 ```
 
@@ -1088,7 +1123,7 @@ class TimeMachine: NSObject {
 **Not Preferred**:
 ```swift
 @objc(MNDTimeMachine) class TimeMachine: NSObject {
-    
+
     @available(*, unavailable) lazy dynamic private var fluxCapacitor = FluxCapacitor()
 
     @discarcableResult @objc func calculateFlux() -> Flux
@@ -1189,13 +1224,13 @@ switch anotherValue {
 case .potato(let kg):
     print("🥔 weights \(kg)Kg's")
 
-case .banana(let g), 
-    .apple(let g), 
+case .banana(let g),
+    .apple(let g),
     .watermelon(let g):
     print("🍌|🍏|🍉 weights \(g)g's")
     addFruitToSalad()
 
-case .eggs(let number, let size) 
+case .eggs(let number, let size)
 where size == .large, someLongFunctionThatTakesUpALotOfSpaceAndValidatesNumber(number):
     print("🥚 amount of Large eggs that passed the test: \(number)")
 
@@ -1295,7 +1330,7 @@ if let number1 = number1 {
 
 Guard statements are required to exit in some way. Generally, this should be simple one line statement such as `return`, `throw`, `break`, `continue`, and `fatalError()`. Large code blocks should be avoided. If cleanup code is required for multiple exit points, consider using a `defer` block to avoid cleanup code duplication.
 
-if possible, place the exit closure inline with the `guard`, otherwise in a new line:
+If possible, place the exit closure inline with the `guard`, otherwise in a new line:
 
 **Preferred**:
 ```swift
@@ -1378,7 +1413,9 @@ In larger expressions, optional parentheses can sometimes make code read more cl
 let playerMark = (player == current ? "X" : "O")
 ```
 
-## Multi-line String Literals
+## String Literals
+
+### Multi-line strings
 
 When building a long string literal, you're encouraged to use the multi-line string literal syntax. Open the literal on the same line as the assignment but do not include text on that line. Indent the text block one additional level.
 
@@ -1413,6 +1450,26 @@ let message = "You cannot charge the flux " +
   "You must use a super-charger " +
   "which costs 10 credits. You currently " +
   "have \(credits) credits available."
+```
+
+### Raw strings
+
+When declaring a string that would require a significant amount of escaping, such as regular expressions, prefer using **raw strings**.
+
+**Preferred**:
+
+```swift
+let json = #"{"email":"banana@banana.com","salutation":"Sir"}"#
+
+let regex = #"(?!(1st|2nd|3rd|\d{1,2}th)\s).*between \d{1,2}-\d{1,2}(am|pm)"#
+```
+
+**Not Preferred**:
+
+```swift
+let json = "{\"email\":\"banana@banana.com\",\"salutation\":\"Sir\"}"
+
+let regex = "(?!(1st|2nd|3rd|\\d{1,2}th)\\s).*between \\d{1,2}-\\d{1,2}(am|pm)"
 ```
 
 ## Organization and Bundle Identifier
