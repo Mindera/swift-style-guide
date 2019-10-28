@@ -534,9 +534,9 @@ private var _state: Int
 let dynamicState: Property<Int>
 private let _dynamicState: MutableProperty<Int>
 
-func reticulateSplines(spline: [String])
+func reticulateSplines(_ splines: [String])
 ...
-private func _reticulateSplines(spline: [String], configuration: Configuration)
+private func _reticulateSplines(_ splines: [String], configuration: Configuration)
 
 func sort(numbers: [Int])
 ...
@@ -551,9 +551,9 @@ private var internalState: Int
 let dynamicState: Property<Int>
 private let mutableDynamicState: MutableProperty<Int>
 
-func reticulateSplines(spline: [String])
+func reticulateSplines(_ splines: [String])
 ...
-private func reticulateSplinesHelper(spline: [String], configuration: Configuration)
+private func reticulateSplinesHelper(splines: [String], configuration: Configuration)
 
 func sort(numbers: [Int])
 ...
