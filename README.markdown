@@ -36,6 +36,7 @@
     - [Constants](#constants)
     - [Static Methods and Variable Type Properties](#static-methods-and-variable-type-properties)
     - [Optionals](#optionals)
+      - [Unused Optional Binding](#unused-optional-binding)
     - [Lazy Initialization](#lazy-initialization)
     - [Type Inference](#type-inference)
       - [Type Annotation for Empty Arrays and Dictionaries](#type-annotation-for-empty-arrays-and-dictionaries)
@@ -906,6 +907,22 @@ UIView.animate(withDuration: 2.0) { [weak self] in
     guard let strongSelf = self else { return }
     strongSelf.alpha = 1.0
 }
+```
+
+#### Unused Optional Binding
+
+When the presence of an optional value is required to the context (but not the value itself, i.e., it won't be used), perform a boolean test instead of using optional binding. Prefer `!= nil` over `let _ =` .
+
+**Preferred**:
+```swift
+guard optionalController != nil else { return }
+// do something that requires optionalController but does not use it
+```
+
+**Not Preferred**:
+```swift
+guard let _ = optionalController else { return }
+// do something that requires optionalController but does not use it
 ```
 
 ### Lazy Initialization
