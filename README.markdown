@@ -36,7 +36,6 @@
     - [Constants](#constants)
     - [Static Methods and Variable Type Properties](#static-methods-and-variable-type-properties)
     - [Optionals](#optionals)
-      - [Unused Optional Binding](#unused-optional-binding)
     - [Lazy Initialization](#lazy-initialization)
     - [Type Inference](#type-inference)
       - [Type Annotation for Empty Arrays and Dictionaries](#type-annotation-for-empty-arrays-and-dictionaries)
@@ -49,6 +48,7 @@
   - [Control Flow](#control-flow)
     - [Ternary Operator](#ternary-operator)
     - [`switch` statements](#switch-statements)
+    - [Unused Optional Binding](#unused-optional-binding)
   - [Golden Path](#golden-path)
     - [Failing Guards](#failing-guards)
   - [Semicolons](#semicolons)
@@ -909,22 +909,6 @@ UIView.animate(withDuration: 2.0) { [weak self] in
 }
 ```
 
-#### Unused Optional Binding
-
-When the presence of an optional value is required to the context (but not the value itself, i.e., it won't be used), perform a boolean test instead of using optional binding. Prefer `!= nil` over `let _ =` .
-
-**Preferred**:
-```swift
-guard optionalController != nil else { return }
-// do something that requires optionalController but does not use it
-```
-
-**Not Preferred**:
-```swift
-guard let _ = optionalController else { return }
-// do something that requires optionalController but does not use it
-```
-
 ### Lazy Initialization
 
 Consider using lazy initialization for finer grained control over object lifetime. This is especially true for `UIViewController` that loads views lazily. You can either use a closure that is immediately called `{ }()` or call a private factory method. Example:
@@ -1274,6 +1258,36 @@ case let .eggs(number, size) where size == .large && someLongFunctionThatTakesUp
     print("🥚 amount to \(number) of size \(size)")
 default:
     print("🤷‍♂️ Got some food which *should be™* eggs: \(anotherValue)")
+}
+```
+
+### Unused Optional Binding
+
+When the presence of an optional value is required to the context (but not the value itself, i.e., it won't be used), perform a boolean test instead of using optional binding in `if` or `guard` statements. Prefer `!= nil` over `let _ =` .
+
+**Preferred**:
+```swift
+guard optionalController != nil else { return }
+// do something that requires optionalController but does not use it
+
+// another example
+if optionalView != nil {
+    // do something that requires optionalView but does not use it
+} else {
+    // do something that does not require optionalView
+}
+```
+
+**Not Preferred**:
+```swift
+guard let _ = optionalController else { return }
+// do something that requires optionalController but does not use it
+
+// another example
+if let _ = optionalView {
+    // do something that requires optionalView but does not use it
+} else {
+    // do something that does not require optionalView
 }
 ```
 
